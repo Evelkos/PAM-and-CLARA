@@ -9,10 +9,10 @@ def get_cmap(n, name="nipy_spectral"):
     return plt.cm.get_cmap(name, n)
 
 
-def plot_data(data, classes):
+def plot_data(data, classes, label="label"):
     # each class from `classes` needs to have different color.
     cmap = get_cmap(len(classes))
-    colors = data["label"].apply(cmap)
+    colors = data[label].apply(cmap)
 
     plt.scatter(data["x"], data["y"], c=colors)
     plt.show()
