@@ -30,7 +30,7 @@ class KMedoidsAlgorithm:
             point.update_cluster_assignment(medoids)
 
     def get_labels_mapper(self):
-        if self.labels and len(self.labels) == len(self.clusters_num):
+        if self.labels and len(self.labels) == self.clusters_num:
             return {
                 medoid_idx: label
                 for label, medoid_idx in zip(self.labels, self.medoids_indices)
