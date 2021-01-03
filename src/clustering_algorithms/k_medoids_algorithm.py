@@ -5,6 +5,11 @@ import pandas as pd
 
 class KMedoidsAlgorithm:
     def __init__(self, points, clusters_num=2, labels=None):
+        if labels and not len(labels) == clusters_num:
+            raise ValueError(
+                "Number of labels needs to be the same as the number of clusters."
+            )
+
         self.points = points
         self.clusters_num = clusters_num
         self.labels = labels

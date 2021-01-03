@@ -1,9 +1,20 @@
 import numpy as np
+import pytest
 
 from clustering_algorithms import KMedoidsAlgorithm, Point
 
 
 class TestKMedoidsAlgorithm:
+    def test_list_of_labels_with_incorrect_length_passed_to_init(self):
+        points = [
+            Point(1, np.array([0, 1]), ["x", "y"]),
+            Point(2, np.array([2, 3]), ["x", "y"]),
+            Point(3, np.array([4, 5]), ["x", "y"]),
+        ]
+
+        with pytest.raises(ValueError):
+            KMedoidsAlgorithm(points, 2, labels=["1", "2", "3"])
+
     def test_get_initial_medoids_indices(self):
         points = [
             Point(idx=1, coordinates=np.array([0, 1]), coordinates_names=["x", "y"]),
@@ -55,7 +66,7 @@ class TestKMedoidsAlgorithm:
             Point(idx=20, coordinates=np.array([101, 0]), coordinates_names=["x", "y"]),
             Point(idx=21, coordinates=np.array([101, 1]), coordinates_names=["x", "y"]),
         ]
-        algorithm = KMedoidsAlgorithm(points, clusters_num=3, labels=["x", "y"])
+        algorithm = KMedoidsAlgorithm(points, clusters_num=3, labels=["a", "b", "c"])
         algorithm.medoids_indices = [10, 14, 18]
         # override medoids_indices to test function properly
 
@@ -90,22 +101,6 @@ class TestKMedoidsAlgorithm:
         assert len(mapper) == 2
         assert mapper[11] == "label_1"
         assert mapper[13] == "label_2"
-
-    def test_labels_mapper_with_incorrect_number_of_labels(self):
-        points = [
-            Point(idx=10, coordinates=np.array([0, 0]), coordinates_names=["x", "y"]),
-            Point(idx=11, coordinates=np.array([0, 1]), coordinates_names=["x", "y"]),
-            Point(idx=12, coordinates=np.array([10, 0]), coordinates_names=["x", "y"]),
-            Point(idx=13, coordinates=np.array([10, 1]), coordinates_names=["x", "y"]),
-        ]
-        algorithm = KMedoidsAlgorithm(points, 2, labels=["label_1", "label_2", "xxx"])
-
-        # choose medoids indices
-        algorithm.medoids_indices = [11, 12]
-        mapper = algorithm.get_labels_mapper()
-        assert len(mapper) == 2
-        assert mapper[11] == 0
-        assert mapper[12] == 1
 
     def test_labels_mapper_when_labels_are_not_specified(self):
         points = [

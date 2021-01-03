@@ -55,13 +55,13 @@ class TestPoint:
         assert data["x2"] == 99
 
     def test_update_cluster_assignment_when_point_is_not_a_medoid(self):
-        point = Point(idx=999, coordinates=0, coordinates_names="x")
+        point = Point(idx=999, coordinates=[0], coordinates_names=["x"])
         medoids = [
-            Point(0, np.array([12]), "x"),
-            Point(1, np.array([11]), "x"),
-            Point(2, np.array([10]), "x"),
-            Point(3, np.array([11]), "x"),
-            Point(4, np.array([12]), "x"),
+            Point(0, np.array([12]), ["x"]),
+            Point(1, np.array([11]), ["x"]),
+            Point(2, np.array([10]), ["x"]),
+            Point(3, np.array([11]), ["x"]),
+            Point(4, np.array([12]), ["x"]),
         ]
         point.update_cluster_assignment(medoids)
 
@@ -72,11 +72,11 @@ class TestPoint:
 
     def test_update_cluster_assignment_when_point_is_a_medoid(self):
         medoids = [
-            Point(0, np.array([12]), "x"),
-            Point(1, np.array([11]), "x"),
-            Point(2, np.array([10]), "x"),
-            Point(3, np.array([11]), "x"),
-            Point(4, np.array([12]), "x"),
+            Point(0, np.array([12]), ["x"]),
+            Point(1, np.array([11]), ["x"]),
+            Point(2, np.array([10]), ["x"]),
+            Point(3, np.array([11]), ["x"]),
+            Point(4, np.array([12]), ["x"]),
         ]
         point = medoids[3]
         point.update_cluster_assignment(medoids)
@@ -88,11 +88,11 @@ class TestPoint:
 
     def test_compute_medoid_replacement_cost_when_point_is_a_medoid(self):
         points = [
-            Point(0, np.array([10]), "x"),
-            Point(1, np.array([11]), "x"),
-            Point(2, np.array([12]), "x"),
-            Point(3, np.array([13]), "x"),
-            Point(4, np.array([14]), "x"),
+            Point(0, np.array([10]), ["x"]),
+            Point(1, np.array([11]), ["x"]),
+            Point(2, np.array([12]), ["x"]),
+            Point(3, np.array([13]), ["x"]),
+            Point(4, np.array([14]), ["x"]),
         ]
         medoids = [points[0], points[4]]
         old_medoid = medoids[0]
@@ -104,18 +104,18 @@ class TestPoint:
 
     def test_cost_of_replacing_nearest_medoid_with_more_similar_medoid(self):
         # create medoids
-        nearest_medoid = Point(1, np.array([10]), "x")
-        second_nearest_medoid = Point(2, np.array([20]), "x")
+        nearest_medoid = Point(1, np.array([10]), ["x"])
+        second_nearest_medoid = Point(2, np.array([20]), ["x"])
         medoids = [nearest_medoid, second_nearest_medoid]
 
         # create point and assign medoids
-        point = Point(0, np.array([0]), "x")
+        point = Point(0, np.array([0]), ["x"])
         point.nearest_medoid = nearest_medoid
         point.nearest_medoid_distance = 10
         point.second_nearest_medoid = second_nearest_medoid
         point.second_nearest_medoid_distance = 20
 
-        new_medoid = Point(3, np.array([5]), "x")
+        new_medoid = Point(3, np.array([5]), ["x"])
         cost = point.compute_medoid_replacement_cost(
             nearest_medoid, new_medoid, medoids
         )
@@ -123,18 +123,18 @@ class TestPoint:
 
     def test_cost_of_replacing_nearest_medoid_with_less_similar_medoid(self):
         # create medoids
-        nearest_medoid = Point(1, np.array([10]), "x")
-        second_nearest_medoid = Point(2, np.array([20]), "x")
+        nearest_medoid = Point(1, np.array([10]), ["x"])
+        second_nearest_medoid = Point(2, np.array([20]), ["x"])
         medoids = [nearest_medoid, second_nearest_medoid]
 
         # create point and assign medoids
-        point = Point(0, np.array([0]), "x")
+        point = Point(0, np.array([0]), ["x"])
         point.nearest_medoid = nearest_medoid
         point.nearest_medoid_distance = 10
         point.second_nearest_medoid = second_nearest_medoid
         point.second_nearest_medoid_distance = 20
 
-        new_medoid = Point(3, np.array([25]), "x")
+        new_medoid = Point(3, np.array([25]), ["x"])
         cost = point.compute_medoid_replacement_cost(
             nearest_medoid, new_medoid, medoids
         )
@@ -144,41 +144,41 @@ class TestPoint:
 
     def test_cost_of_replacing_some_medoid_with_points_new_nearest_medoid(self):
         # create medoids
-        nearest_medoid = Point(1, np.array([10]), "x")
-        second_nearest_medoid = Point(2, np.array([20]), "x")
-        medoid = Point(2, np.array([40]), "x")
+        nearest_medoid = Point(1, np.array([10]), ["x"])
+        second_nearest_medoid = Point(2, np.array([20]), ["x"])
+        medoid = Point(2, np.array([40]), ["x"])
         medoids = [nearest_medoid, second_nearest_medoid, medoid]
 
         # create point and assign medoids
-        point = Point(0, np.array([0]), "x")
+        point = Point(0, np.array([0]), ["x"])
         point.nearest_medoid = nearest_medoid
         point.nearest_medoid_distance = 10
         point.second_nearest_medoid = second_nearest_medoid
         point.second_nearest_medoid_distance = 20
 
-        new_medoid = Point(3, np.array([5]), "x")
+        new_medoid = Point(3, np.array([5]), ["x"])
         cost = point.compute_medoid_replacement_cost(medoid, new_medoid, medoids)
         assert cost == new_medoid.coordinates[0] - nearest_medoid.coordinates[0]
 
     def test_cost_of_replacing_medoid_with_distant_medoid(self):
         # create medoids
-        nearest_medoid = Point(1, np.array([10]), "x")
-        second_nearest_medoid = Point(2, np.array([20]), "x")
-        medoid = Point(2, np.array([40]), "x")
+        nearest_medoid = Point(1, np.array([10]), ["x"])
+        second_nearest_medoid = Point(2, np.array([20]), ["x"])
+        medoid = Point(2, np.array([40]), ["x"])
         medoids = [nearest_medoid, second_nearest_medoid, medoid]
 
         # create point and assign medoids
-        point = Point(0, np.array([0]), "x")
+        point = Point(0, np.array([0]), ["x"])
         point.nearest_medoid = nearest_medoid
         point.nearest_medoid_distance = 10
         point.second_nearest_medoid = second_nearest_medoid
         point.second_nearest_medoid_distance = 20
 
-        new_medoid = Point(3, np.array([555]), "x")
+        new_medoid = Point(3, np.array([555]), ["x"])
         cost = point.compute_medoid_replacement_cost(medoid, new_medoid, medoids)
         assert cost == 0
 
     def test_compute_distance(self):
-        point = Point(0, np.array([123]), "x")
-        other = Point(1, np.array([9458]), "x")
+        point = Point(0, np.array([123]), ["x"])
+        other = Point(1, np.array([9458]), ["x"])
         assert point.compute_distance(other) == 9458 - 123
