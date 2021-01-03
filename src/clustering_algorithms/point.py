@@ -1,7 +1,10 @@
+from typing import List
+
 import numpy as np
+import pandas as pd
 
 
-def get_initial_points(df):
+def get_initial_points(df: pd.DataFrame):
     points = []
     for item in df.iterrows():
         idx, row = item
@@ -12,7 +15,15 @@ def get_initial_points(df):
 
 
 class Point:
-    def __init__(self, idx, coordinates, coordinates_names):
+    def __init__(
+        self, idx: int, coordinates: List[float], coordinates_names: List[str]
+    ):
+        if not len(coordinates) == len(coordinates_names):
+            raise ValueError(
+                "List of coordinates and list of coordinates's names "
+                "need to be the same length"
+            )
+
         self.idx = idx
         self.coordinates = coordinates
         self.coordinates_names = coordinates_names
@@ -25,7 +36,7 @@ class Point:
         self.second_nearest_medoid = None
         self.second_nearest_medoid_distance = None
 
-    def compute_distance(self, other_point):
+    def compute_distance(self, other_point: "Point") -> float:
         """
         Compute distance between two points.
 
@@ -38,7 +49,20 @@ class Point:
         """
         return np.linalg.norm(self.coordinates - other_point.coordinates)
 
-    def get_data(self):
+    def get_data(self) -> dict:
+        """
+        Get info about Point.
+
+        Returns:
+            Dictionary with data about point:
+                * idx
+                * nearest_medoid
+                * nearest_medoid_distance
+                * second_nearest_medoid
+                * second_nearest_medoid_distance
+                * all coordinates with their names as keys
+
+        """
         data = {
             "idx": self.idx,
             "nearest_medoid": self.nearest_medoid.idx,
@@ -54,10 +78,16 @@ class Point:
         )
         return data
 
-    def update_cluster_assignment(self, medoids):
+    def update_cluster_assignment(self, medoids: List["Point"]) -> None:
         """
-        Pick nearest and second nearest medois from given medoids list.
-        Update Point's assignment.
+        Choose nearest medoid and second nearest medoid from given `medoids` and assign
+        them to point's nearest_medoid and second_nearest_medoid attributes. If point
+        is a medoid, nearest_medoid attribute will be pointing to itself. Update
+        point's nearest_medoid_distance and second_nearest_medoid_distance.
+
+        Arguments:
+            medoids: list of available medoids
+
         """
         if self in medoids:
             self.nearest_medoid = self
@@ -89,25 +119,30 @@ class Point:
                 self.second_nearest_medoid = medoid
                 self.second_nearest_medoid_distance = distance
 
-    def compute_medoid_replacement_cost(self, medoid_to_change, new_medoid, medoids):
+    def compute_medoid_replacement_cost(
+        self, old_medoid: "Point", new_medoid: "Point", medoids: List["Point"]
+    ) -> float:
         """
-        Compute partial cost of replacing medoid `medoid_to_change` by object
-        `new_medoid`.
+        Compute partial cost of replacing `old_medoid` by `new_medoid`.
 
         Arguments:
-            medoid_to_change: medoid that we want to replace by another object
-            new_medoid:
+            old_medoid: medoid that we want to replace
+            new_medoid: point that could replace old medoid
+            medoids: list of currently available medoids
+
+        Return:
+            Cost of replacing `old_medoid` with `new_medoid`.
 
         """
-        # medoid's cluster will not change, do not compute cost for medoid
-        if self in medoids and self is not medoid_to_change:
+        # medoid's cluster will not change, so cost is equal to 0
+        if self in medoids and self is not old_medoid:
             return 0
 
         # distance to the new medoid
         new_medoid_distance = self.compute_distance(new_medoid)
 
         # we want to replace medoid that represents Point's cluster
-        if self.nearest_medoid == medoid_to_change:
+        if self.nearest_medoid == old_medoid:
             if new_medoid_distance >= self.second_nearest_medoid_distance:
                 # second_nearest_medoid will be Point's nearest_medoid
                 return (
