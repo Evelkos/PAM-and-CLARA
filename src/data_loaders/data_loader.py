@@ -21,6 +21,10 @@ def load_data(filename):
     df = df.rename(columns={"a0": "x", "a1": "y", "CLASS": "label"})
     df.label = pd.to_numeric(df.label)
 
+    df.astype({'x': 'float'}).dtypes
+    df.astype({'y': 'float'}).dtypes
+    df.astype({'label': 'str'}).dtypes
+
     classes = meta["CLASS"][1]
 
     return df, classes

@@ -1,15 +1,18 @@
 import random
+from statistics import mean
 
 import numpy as np
 
-from pam import PAM
-from utils import compute_distance
-from k_medoids_algorithm import KMedoidsAlgorithm
-from statistics import mean
+from clustering_algorithms.k_medoids_algorithm import KMedoidsAlgorithm
+from clustering_algorithms.pam import PAM
+from clustering_algorithms.utils import compute_distance
+
 
 class CLARA(KMedoidsAlgorithm):
-    def __init__(self, df, clusters_num=2, labels=None, samples_num = None, seed=44):
-        super().__init__(df=df, clusters_num=clusters_num, labels=labels, points=None, seed=seed)
+    def __init__(self, df, clusters_num=2, labels=None, samples_num=None, seed=44):
+        super().__init__(
+            df=df, clusters_num=clusters_num, labels=labels, points=None, seed=seed
+        )
 
         self.update_clusters_assignment()
         self.best_medoids = self.medoids_indices
@@ -30,7 +33,12 @@ class CLARA(KMedoidsAlgorithm):
         return self.df.iloc[rows], [self.points[row] for row in rows]
 
     def calculate_dissimilarity(self):
-        return mean([compute_distance(point.coordinates, point.nearest_medoid.coordinates) for point in self.points])
+        return mean(
+            [
+                compute_distance(point.coordinates, point.nearest_medoid.coordinates)
+                for point in self.points
+            ]
+        )
 
     def run(self):
         for idx in range(5):
@@ -38,7 +46,13 @@ class CLARA(KMedoidsAlgorithm):
             df, points = self.draw_samples()
 
             # call PAM to find medoids of the sample
-            pam = PAM(df, clusters_num=self.clusters_num, labels=self.labels, points=points, seed=self.seed)
+            pam = PAM(
+                df,
+                clusters_num=self.clusters_num,
+                labels=self.labels,
+                points=points,
+                seed=self.seed,
+            )
             pam.run()
 
             # for each point determine the most similar medoid

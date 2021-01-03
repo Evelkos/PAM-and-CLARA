@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import compute_distance
+from clustering_algorithms.utils import compute_distance
 
 
 class Point:

@@ -2,11 +2,11 @@ import random
 
 import numpy as np
 
-from point import Point
+from clustering_algorithms.point import Point
 
 
 class KMedoidsAlgorithm:
-    def __init__(self, df, clusters_num=2, labels=None, points = None, seed=44):
+    def __init__(self, df, clusters_num=2, labels=None, points=None, seed=44):
         random.seed(seed)
         self.seed = seed
 
@@ -15,24 +15,27 @@ class KMedoidsAlgorithm:
         self.labels = labels
 
         self.points = points if points else self.get_initial_points(df)
-        self.medoids_indices = self.get_initial_medoids_indices(seed)
+        self.medoids_indices = self.get_initial_medoids_indices(
+            self.points, clusters_num, seed
+        )
 
-    def get_initial_points(self, df):
+    @staticmethod
+    def get_initial_points(df):
         points = []
         for item in df.iterrows():
             idx, row = item
-            coordinates = np.array([row["x"], row["y"]])
+            coordinates = np.array([float(row["x"]), float(row["y"])])
             point = Point(idx=idx, coordinates=coordinates)
             points.append(point)
         return points
 
-    def get_initial_medoids_indices(self, seed=44):
+    @staticmethod
+    def get_initial_medoids_indices(source_points, clusters_num, seed=44):
         """
         Arbitrary selection of `cluster_num` objects.
         """
-        points_indices = [point.idx for point in self.points]
-        return random.sample(points_indices, self.clusters_num)
-
+        points_indices = [point.idx for point in source_points]
+        return random.sample(points_indices, clusters_num)
 
     def prepare_medoids(self):
         return [point for point in self.points if point.idx in self.medoids_indices]
