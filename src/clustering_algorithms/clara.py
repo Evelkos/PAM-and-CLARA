@@ -1,18 +1,14 @@
 import random
 from statistics import mean
 
-import numpy as np
-
 from clustering_algorithms.k_medoids_algorithm import KMedoidsAlgorithm
 from clustering_algorithms.pam import PAM
 from clustering_algorithms.utils import compute_distance
 
 
 class CLARA(KMedoidsAlgorithm):
-    def __init__(self, df, clusters_num=2, labels=None, samples_num=None, seed=44):
-        super().__init__(
-            df=df, clusters_num=clusters_num, labels=labels, points=None, seed=seed
-        )
+    def __init__(self, points, clusters_num=2, labels=None, samples_num=None):
+        super().__init__(points=points, clusters_num=clusters_num, labels=labels)
 
         self.update_clusters_assignment()
         self.best_medoids = self.medoids_indices
@@ -22,15 +18,13 @@ class CLARA(KMedoidsAlgorithm):
         if samples_num:
             self.samples_num = samples_num
         else:
-            self.samples_num = min(40 + 2 * clusters_num, len(self.df))
+            self.samples_num = min(40 + 2 * clusters_num, len(self.points))
 
     def draw_samples(self):
         """
         Draw a sample of `samples_num` objects randomly from the entire data set.
         """
-        idx_range = range(len(self.df))
-        rows = random.sample(idx_range, self.samples_num)
-        return self.df.iloc[rows], [self.points[row] for row in rows]
+        return random.sample(self.points, self.samples_num)
 
     def calculate_dissimilarity(self):
         return mean(
@@ -43,15 +37,12 @@ class CLARA(KMedoidsAlgorithm):
     def run(self):
         for idx in range(5):
             # draw samples randomly from the entire dataset
-            df, points = self.draw_samples()
 
             # call PAM to find medoids of the sample
             pam = PAM(
-                df,
+                points=self.draw_samples(),
                 clusters_num=self.clusters_num,
                 labels=self.labels,
-                points=points,
-                seed=self.seed,
             )
             pam.run()
 

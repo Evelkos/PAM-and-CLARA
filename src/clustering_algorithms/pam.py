@@ -1,16 +1,9 @@
-import random
-
-import numpy as np
-
 from clustering_algorithms.k_medoids_algorithm import KMedoidsAlgorithm
-from clustering_algorithms.point import Point
 
 
 class PAM(KMedoidsAlgorithm):
-    def __init__(self, df, clusters_num=2, labels=None, points=None, seed=44):
-        super().__init__(
-            df=df, clusters_num=clusters_num, labels=labels, points=points, seed=seed
-        )
+    def __init__(self, points, clusters_num=2, labels=None):
+        super().__init__(points=points, clusters_num=clusters_num, labels=labels)
         self.medoids = self.prepare_medoids()
 
     def compute_replacement_cost(self, old_medoid, new_medoid):

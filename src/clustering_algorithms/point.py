@@ -3,16 +3,45 @@ import numpy as np
 from clustering_algorithms.utils import compute_distance
 
 
+def get_initial_points(df):
+    points = []
+    for item in df.iterrows():
+        idx, row = item
+        coordinates = np.array([float(row["x"]), float(row["y"])])
+        point = Point(idx=idx, coordinates=coordinates, coordinates_names=["x", "y"])
+        points.append(point)
+    return points
+
+
 class Point:
-    def __init__(self, idx, coordinates):
+    def __init__(self, idx, coordinates, coordinates_names):
         self.idx = idx
         self.coordinates = coordinates
+        self.coordinates_names = coordinates_names
+
         # Point's cluster (nearest medoid)
         self.nearest_medoid = None
         self.nearest_medoid_distance = None
+
         # Point's second nearest medoid
         self.second_nearest_medoid = None
         self.second_nearest_medoid_distance = None
+
+    def get_data(self):
+        data = {
+            "idx": self.idx,
+            "nearest_medoid": self.nearest_medoid.idx,
+            "nearest_medoid_distance": self.nearest_medoid_distance,
+            "second_nearest_medoid": self.second_nearest_medoid.idx,
+            "second_nearest_medoid_distance": self.second_nearest_medoid_distance,
+        }
+        data.update(
+            {
+                name: value
+                for name, value in zip(self.coordinates_names, self.coordinates)
+            }
+        )
+        return data
 
     def update_cluster_assignment(self, medoids):
         """
@@ -21,6 +50,7 @@ class Point:
         """
         if self in medoids:
             self.nearest_medoid = self
+            self.nearest_medoid_distance = 0
             return
 
         self.nearest_medoid = np.nan
@@ -59,7 +89,7 @@ class Point:
 
         """
         # medoid's cluster will not change, do not compute cost for medoid
-        if self in medoids:
+        if self in medoids and self is not medoid_to_change:
             return 0
 
         # distance to the new medoid

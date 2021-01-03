@@ -1,33 +1,17 @@
 import random
 
-import numpy as np
-
-from clustering_algorithms.point import Point
+import pandas as pd
 
 
 class KMedoidsAlgorithm:
-    def __init__(self, df, clusters_num=2, labels=None, points=None, seed=44):
-        random.seed(seed)
-        self.seed = seed
-
-        self.df = df
+    def __init__(self, points, clusters_num=2, labels=None):
+        self.points = points
         self.clusters_num = clusters_num
         self.labels = labels
 
-        self.points = points if points else self.get_initial_points(df)
         self.medoids_indices = self.get_initial_medoids_indices(
-            self.points, clusters_num, seed
+            self.points, clusters_num
         )
-
-    @staticmethod
-    def get_initial_points(df):
-        points = []
-        for item in df.iterrows():
-            idx, row = item
-            coordinates = np.array([float(row["x"]), float(row["y"])])
-            point = Point(idx=idx, coordinates=coordinates)
-            points.append(point)
-        return points
 
     @staticmethod
     def get_initial_medoids_indices(source_points, clusters_num, seed=44):
@@ -46,7 +30,7 @@ class KMedoidsAlgorithm:
             point.update_cluster_assignment(medoids)
 
     def get_labels_mapper(self):
-        if self.labels:
+        if self.labels and len(self.labels) == len(self.clusters_num):
             return {
                 medoid_idx: label
                 for label, medoid_idx in zip(self.labels, self.medoids_indices)
@@ -54,15 +38,15 @@ class KMedoidsAlgorithm:
         return {medoid_idx: idx for idx, medoid_idx in enumerate(self.medoids_indices)}
 
     def get_result_df(self):
-        labels_mapper = self.get_labels_mapper()
-
-        result_labels = []
+        rows = {column: [] for column in self.points[0].get_data().keys()}
         for point in self.points:
-            label = labels_mapper[point.nearest_medoid.idx]
-            result_labels.append(label)
+            for key, value in point.get_data().items():
+                rows[key].append(value)
 
-        self.df["cluster"] = result_labels
-        return self.df
+        result = pd.DataFrame(rows)
+        result["cluster"] = result["nearest_medoid"]
+        result["cluster"].replace(self.get_labels_mapper(), inplace=True)
+        return result
 
     def swap_medoids(self, old_medoid, new_medoid):
         self.medoids_indices.remove(old_medoid.idx)
