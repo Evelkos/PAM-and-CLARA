@@ -3,7 +3,6 @@ from statistics import mean
 
 from clustering_algorithms.k_medoids_algorithm import KMedoidsAlgorithm
 from clustering_algorithms.pam import PAM
-from clustering_algorithms.utils import compute_distance
 
 
 class CLARA(KMedoidsAlgorithm):
@@ -28,10 +27,7 @@ class CLARA(KMedoidsAlgorithm):
 
     def calculate_dissimilarity(self):
         return mean(
-            [
-                compute_distance(point.coordinates, point.nearest_medoid.coordinates)
-                for point in self.points
-            ]
+            [point.compute_distance(point.nearest_medoid) for point in self.points]
         )
 
     def run(self):

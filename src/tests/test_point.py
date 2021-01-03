@@ -177,3 +177,8 @@ class TestPoint:
         new_medoid = Point(3, np.array([555]), "x")
         cost = point.compute_medoid_replacement_cost(medoid, new_medoid, medoids)
         assert cost == 0
+
+    def test_compute_distance(self):
+        point = Point(0, np.array([123]), "x")
+        other = Point(1, np.array([9458]), "x")
+        assert point.compute_distance(other) == 9458 - 123

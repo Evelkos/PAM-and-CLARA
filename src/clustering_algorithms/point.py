@@ -1,7 +1,5 @@
 import numpy as np
 
-from clustering_algorithms.utils import compute_distance
-
 
 def get_initial_points(df):
     points = []
@@ -26,6 +24,19 @@ class Point:
         # Point's second nearest medoid
         self.second_nearest_medoid = None
         self.second_nearest_medoid_distance = None
+
+    def compute_distance(self, other_point):
+        """
+        Compute distance between two points.
+
+        Arguments:
+            other_point: point
+
+        Return:
+            Linear distance between two points.
+
+        """
+        return np.linalg.norm(self.coordinates - other_point.coordinates)
 
     def get_data(self):
         data = {
@@ -59,7 +70,7 @@ class Point:
         self.second_nearest_medoid_distance = np.nan
 
         for medoid in medoids:
-            distance = compute_distance(self.coordinates, medoid.coordinates)
+            distance = self.compute_distance(medoid)
 
             # first assignment or better cluster found
             if self.nearest_medoid is np.nan or distance < self.nearest_medoid_distance:
@@ -93,7 +104,7 @@ class Point:
             return 0
 
         # distance to the new medoid
-        new_medoid_distance = compute_distance(self.coordinates, new_medoid.coordinates)
+        new_medoid_distance = self.compute_distance(new_medoid)
 
         # we want to replace medoid that represents Point's cluster
         if self.nearest_medoid == medoid_to_change:
