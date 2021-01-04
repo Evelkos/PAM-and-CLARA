@@ -24,9 +24,9 @@ class TestKMedoidsAlgorithm:
             Point(idx=5, coordinates=np.array([8, 9]), coordinates_names=["x", "y"]),
         ]
 
-        medoids = KMedoidsAlgorithm.get_initial_medoids_indices(points, 2, 12)
+        medoids = KMedoidsAlgorithm.get_initial_medoids_indices(points, 2)
         assert len(medoids) == 2
-        medoids = KMedoidsAlgorithm.get_initial_medoids_indices(points, 3, 12)
+        medoids = KMedoidsAlgorithm.get_initial_medoids_indices(points, 3)
         assert len(medoids) == 3
 
     def test_prepare_medoids(self):
