@@ -4,12 +4,14 @@ import numpy as np
 import pandas as pd
 
 
-def get_initial_points(df: pd.DataFrame):
+def get_initial_points(df: pd.DataFrame, coordinates_names=["x", "y"]):
     points = []
     for item in df.iterrows():
         idx, row = item
-        coordinates = np.array([float(row["x"]), float(row["y"])])
-        point = Point(idx=idx, coordinates=coordinates, coordinates_names=["x", "y"])
+        coordinates = np.array([row[name] for name in coordinates_names])
+        point = Point(
+            idx=idx, coordinates=coordinates, coordinates_names=coordinates_names
+        )
         points.append(point)
     return points
 

@@ -1,27 +1,32 @@
-import random
-
-from clustering_algorithms import CLARA, PAM
+from clustering_algorithms import CLARA, PAM, get_initial_points
 from data_loaders import load_data
 from visualizers import plot_data
 
-FILENAME = "datasets/artificial/zelnik4.arff"
+FILENAME = "datasets/artificial/sizes3.arff"
+# FILENAME = "datasets/artificial/zelnik4.arff"
 # FILENAME = "datasets/artificial/xclara.arff"
 
 
-if __name__ == "__main__":
-
-    df, classes = load_data(FILENAME)
-    # plot_data(df, classes)
-    # import pdb
-
-    # pdb.set_trace()
-
-    # pam = PAM(df, len(classes), seed=random.random())
-    # pam.run(100)
-    # result = pam.get_result_df()
-    # plot_data(result, classes, "cluster")
-
-    clara = CLARA(df, len(classes), seed=random.random())
+def run_clara(data):
+    points = get_initial_points(data["df"], data["coordinates_columns"])
+    clara = CLARA(points, len(data["classes"]), labels=data["classes"])
     clara.run()
-    result = clara.get_result_df()
-    plot_data(result, classes, "cluster")
+    return clara.get_result_df()
+
+
+def run_pam(data):
+    points = get_initial_points(data["df"], data["coordinates_columns"])
+    pam = PAM(points, len(classes))
+    pam.run()
+    return pam.get_result_df()
+
+
+if __name__ == "__main__":
+    data = load_data(FILENAME)
+    # plot_data(data["df"], data["classes"], data["class_column"])
+
+    # result = run_pam(data)
+    result = run_clara(data)
+    plot_data(
+        result, data["classes"], "cluster", attributes_names=data["coordinates_columns"]
+    )
