@@ -1,9 +1,10 @@
 from clustering_algorithms import CLARA, PAM, get_initial_points
 from data_loaders import load_data
+from timer import Timer
 from visualizers import plot_data
 
-FILENAME = "datasets/artificial/sizes3.arff"
-# FILENAME = "datasets/artificial/zelnik4.arff"
+# FILENAME = "datasets/artificial/sizes3.arff"
+FILENAME = "datasets/artificial/zelnik4.arff"
 # FILENAME = "datasets/artificial/xclara.arff"
 
 
@@ -26,7 +27,14 @@ if __name__ == "__main__":
     # plot_data(data["df"], data["classes"], data["class_column"])
 
     # result = run_pam(data)
-    result = run_clara(data)
-    plot_data(
-        result, data["classes"], "cluster", attributes_names=data["coordinates_columns"]
-    )
+
+    t = Timer()
+    for iteration in range(10):
+        t.start()
+        result = run_clara(data)
+        t.stop()
+        print(t.time)
+
+    # plot_data(
+    #     result, data["classes"], "cluster", attributes_names=data["coordinates_columns"]
+    # )
