@@ -8,15 +8,17 @@ FILENAME = "datasets/artificial/zelnik4.arff"
 # FILENAME = "datasets/artificial/xclara.arff"
 
 
-def run_clara(data):
-    points = get_initial_points(data["df"], data["coordinates_columns"])
+def run_clara(data, points):
+    if not points:
+        points = get_initial_points(data["df"], data["coordinates_columns"])
     clara = CLARA(points, len(data["classes"]), labels=data["classes"])
     clara.run()
     return clara.get_result_df()
 
 
-def run_pam(data):
-    points = get_initial_points(data["df"], data["coordinates_columns"])
+def run_pam(data, points):
+    if not points:
+        points = get_initial_points(data["df"], data["coordinates_columns"])
     pam = PAM(points, len(classes))
     pam.run()
     return pam.get_result_df()
@@ -28,10 +30,12 @@ if __name__ == "__main__":
 
     # result = run_pam(data)
 
+    points = get_initial_points(data["df"], data["coordinates_columns"])
+
     t = Timer()
     for iteration in range(10):
         t.start()
-        result = run_clara(data)
+        result = run_clara(data, points)
         t.stop()
         print(t.time)
 
