@@ -8,7 +8,7 @@ def get_initial_points(df: pd.DataFrame, coordinates_names=["x", "y"]):
     points = []
     for item in df.iterrows():
         idx, row = item
-        coordinates = np.array([row[name] for name in coordinates_names])
+        coordinates = np.array([float(row[name]) for name in coordinates_names])
         point = Point(
             idx=idx, coordinates=coordinates, coordinates_names=coordinates_names
         )
