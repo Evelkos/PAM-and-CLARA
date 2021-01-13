@@ -25,7 +25,7 @@ class PAM(KMedoidsAlgorithm):
         """
         cost = 0
         for point in self.points:
-            if not point == new_medoid and point not in self.medoids:
+            if point not in self.medoids or point is old_medoid:
                 cost += point.compute_medoid_replacement_cost(
                     old_medoid, new_medoid, self.medoids
                 )
@@ -48,7 +48,7 @@ class PAM(KMedoidsAlgorithm):
         """
         replacements = []
         for new_medoid in self.points:
-            if new_medoid not in self.medoids:
+            if new_medoid not in self.medoids and new_medoid is not old_medoid:
                 cost = self.compute_replacement_cost(old_medoid, new_medoid)
                 replacements.append({"cost": cost, "new_medoid": new_medoid})
 
