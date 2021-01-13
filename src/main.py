@@ -15,7 +15,7 @@ def run_clara(data, points):
     return clara.get_result_df()
 
 
-def run_pam(points):
+def run_pam(data, points):
     pam = PAM(points, len(data["classes"]), labels=data["classes"])
     pam.run()
     return pam.get_result_df()
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     # plot_data(data["df"], data["classes"], data["class_column"])
 
     points = get_initial_points(data["df"], data["coordinates_columns"])
-    result = run_clara(data, points)
-    # result = run_pam(data, points)
+    # result = run_clara(data, points)
+    result = run_pam(data, points)
     plot_data(
         result, data["classes"], "cluster", attributes_names=data["coordinates_columns"]
     )

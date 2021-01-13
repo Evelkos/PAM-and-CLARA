@@ -61,7 +61,10 @@ class PAM(KMedoidsAlgorithm):
         to fetch the results.
 
         """
+        iteration = 1
         while True:
+            print(f"Iteration {iteration}")
+            iteration += 1
             # prepare list of currently used medoids
             self.medoids = self.prepare_medoids()
             self.update_clusters_assignment()
@@ -79,3 +82,4 @@ class PAM(KMedoidsAlgorithm):
             # stop calculations when cost is no longer negative
             if best_replacement[0] >= 0:
                 break
+        self.update_clusters_assignment()

@@ -101,6 +101,7 @@ class KMedoidsAlgorithm:
         result = pd.DataFrame(rows)
         result["cluster"] = result["nearest_medoid"]
         result["cluster"].replace(self.get_labels_mapper(), inplace=True)
+
         return result
 
     def swap_medoids(self, old_medoid: Point, new_medoid: Point) -> None:
