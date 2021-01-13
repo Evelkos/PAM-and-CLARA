@@ -3,6 +3,8 @@ from typing import List
 import numpy as np
 import pandas as pd
 
+from numpy.linalg import norm
+
 
 def get_initial_points(df: pd.DataFrame, coordinates_names=["x", "y"]):
     points = []
@@ -49,7 +51,7 @@ class Point:
             Linear distance between two points.
 
         """
-        return np.linalg.norm(self.coordinates - other_point.coordinates)
+        return norm(self.coordinates - other_point.coordinates)
 
     def get_data(self) -> dict:
         """
@@ -91,11 +93,6 @@ class Point:
             medoids: list of available medoids
 
         """
-        if self in medoids:
-            self.nearest_medoid = self
-            self.nearest_medoid_distance = 0
-            return
-
         self.nearest_medoid = np.nan
         self.nearest_medoid_distance = np.nan
         self.second_nearest_medoid = np.nan
